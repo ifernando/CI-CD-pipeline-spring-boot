@@ -18,6 +18,10 @@ jenkins:
 #jenkins_ssh_public_key: jenkins-id_rsa.pub
 jenkins_git_user: git
 jenkins_git_host: github.com
-jenkins_git_path: ifernando
+jenkins_git_path: bud93411
 jenkins_git_repositories:
-- hello-world
+- jenkins-hello-world
+
+jenkins_seed_name: pipeline-seed
+jenkins_seed_template: seed-config.xml.j2
+jenkins_job_template: jobs.groovy.j2
