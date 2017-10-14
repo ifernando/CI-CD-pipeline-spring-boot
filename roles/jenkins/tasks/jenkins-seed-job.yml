@@ -1,0 +1,23 @@
+- name: Get list of jobs
+  uri: url="http://127.0.0.1:8080/api/json?tree=jobs[name]" return_content=yes
+  register: jobs
+
+- name: Check if seed job exists
+  set_fact:
+    seed_exists: "{{ seed_name in jobs.json.jobs|map(attribute='name')|list }}"
+
+- name: Create seed job
+  uri:
+    url: "http://127.0.0.1:8080/createItem?name={{ seed_name }}"
+    method: POST
+    HEADER_Content-Type: application/xml
+    body: "{{ lookup('template', jenkins_seed_template) }}"
+  register: jenkins_seed_updated
+  when: not seed_exists
+
+- name: Run seed job
+  uri:
+    url: "http://127.0.0.1:8080/job/{{ seed_name }}/build"
+    method: POST
+    status_code: 201
+  when: jenkins_seed_updated|success

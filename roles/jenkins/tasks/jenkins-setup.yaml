@@ -1,0 +1,31 @@
+- name: Create Jenkins admin password hash
+  shell: echo -n "{{ jenkins_pass }}{jenkins}" | sha256sum - | awk '{ print $1; }'
+  register: jenkins_pass_hash
+
+- name: Create admin user directory
+  file:
+    path: "~jenkins/users/admin"
+    owner: jenkins
+    group: jenkins
+    mode: 0755
+    state: directory
+    recurse: yes
+
+- name: Create admin
+  template: src=admin-config.xml.j2 dest="~jenkins/users/admin/config.xml" force=no
+  register: jenkins_admin_config
+
+- name: Create config
+  copy: src=config.xml dest="~jenkins/config.xml"
+  register: jenkins_config
+
+- name: Restart Jenkins if necessary
+  service: name=jenkins state=restarted
+  when: jenkins_defaults|changed or jenkins_admin_config|changed or jenkins_config|changed
+
+- name: Wait for Jenkins to become available
+  wait_for: port=8080
+
+#- name: Wait for Jenkins to become available
+#  wait_for: port=8081
+

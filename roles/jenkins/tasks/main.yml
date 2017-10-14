@@ -28,3 +28,6 @@
 
 # Run configuration
 - include: config.yml
+
+# Create Jenkins Seed Jobs
+- include: jenkins-seed-job.yml

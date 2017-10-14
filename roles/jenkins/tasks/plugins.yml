@@ -12,7 +12,7 @@
   when: plugins_installed.changed and plugins_installed.stdout.find('{{ item }}') == -1
   with_items: plugins
   notify:
-    - 'Restart Jenkins'
+    - 'Safe Restart Jenkins'
 
 - name: List plugins to be updated
   sudo: yes
@@ -24,4 +24,4 @@
   action: command java -jar {{ jenkins.cli_dest }} -s http://localhost:8080 install-plugin {{ plugins_updates.stdout }}
   when: plugins_updates.stdout != ''
   notify:
-    - 'Restart Jenkins'
+    - 'Safe Restart Jenkins'

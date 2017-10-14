@@ -12,3 +12,12 @@ jenkins:
   updates_dest: '{{ jenkins_dest }}/updates_jenkins.json' # Jenkins updates file
 
 #  jenkins_admin_pass: "{{ lookup('file', '/var/lib/jenkins/secrets/initialAdminPassword') }}"
+
+#jenkins_admin_pass: use-a-vault-variable-for-this
+#jenkins_ssh_private_key: jenkins-id_rsa
+#jenkins_ssh_public_key: jenkins-id_rsa.pub
+jenkins_git_user: git
+jenkins_git_host: github.com
+jenkins_git_path: ifernando
+jenkins_git_repositories:
+- hello-world

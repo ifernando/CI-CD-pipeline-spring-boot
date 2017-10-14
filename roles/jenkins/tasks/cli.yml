@@ -32,6 +32,12 @@
     backup: yes
   register: config_xml
 
+- replace:
+    path: /etc/default/jenkins
+    regexp: '(\s+)8081(\s+.*)?$'
+    replace: '\18080\2'
+    backup: yes
+
 - name: Restart Jenkins process to pick new config.xml settings
   sudo: yes
   command: service jenkins restart
