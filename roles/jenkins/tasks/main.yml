@@ -1,0 +1,30 @@
+---
+# Add Jenkins repository
+- include: repo.yml
+
+# Install dependencies
+- include: dependencies_deb.yml
+
+# Install Jenkins
+- name: Install Jenkins
+  sudo: yes
+  apt: pkg=jenkins state=latest update_cache=yes cache_valid_time=86400
+
+# Install mvn
+- name: Install MVN
+  sudo: yes
+  apt: pkg=maven state=latest update_cache=yes cache_valid_time=86400
+
+# Install Docker Engine
+- name: Install Docker Engine
+  sudo: yes
+  apt: pkg=docker state=latest update_cache=yes cache_valid_time=86400
+
+# Install Jenkins cli
+- include: cli.yml
+
+# Install/update Jenkins plugins
+- include: plugins.yml
+
+# Run configuration
+- include: config.yml

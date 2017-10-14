@@ -1,0 +1,10 @@
+---
+# Add Jenkins repository key
+- name: Add jenkins apt-key
+  sudo: yes
+  apt_key: data="{{ lookup('file', 'jenkins-ci.org.key') }}" state=present
+
+# Add Jenkins repository
+- name: Add Jenkins repository
+  sudo: yes
+  apt_repository: repo='{{ jenkins.deb.repo }}' state=present update_cache=yes
