@@ -16,10 +16,10 @@ vagrant up
 .Jenkins Ansible role will be executed and the following steps are executed :
    - Jenkins apt repository will be added 
    - Dependency deb's (git and curl) will be installed 
-   - Installation of Jenkins
+   - Installation of Jenkins on /var/lib/jenkins
    - Installation of Maven
    - Installation of Docker inorder for Jenkins to build and run images as containers to run the springboot code fetched from : https://github.com/ifernando/jenkins-hello-world. The docker will be running on a socket on port: 4342 
-   - Installation of jenkins-cli.jar to interact with Jenkins through CLI
+   - Installation of jenkins-cli.jar in /opt/jenkins to interact with Jenkins through CLI
    - Upgrades Jenkins , installs required plugins to run the Pipeline and updates the plugins as well 
    - Configures Jenkins port and and the Prefix 
    - Configures a Jenkins user , sets up ssh keypair to access github to fetch the code and obtains a Crumb from the API and stores it as an ansible variable 'jenkins_crumb_token'
@@ -29,6 +29,19 @@ vagrant up
           - Pushes the image to dockerhub public repo , this can be obtained from : docker pull roshaneishara/jenkins-pipeline-hello-world
           
 
+#https://github.com/ifernando/jenkins-hello-world#
+    - This repository contains the code provide by FETCHR : https://github.com/talal-shobaita/hello-world plus a Groovy file (build.groovy) , a Dockerfile and a dockerentry file to set some Docker variables required for the tomcat docker image
+    - The build.groovy file will be read by the jenkins pipeline  
 
+# Accessing the Jenkins through your host 
+   - http://localhost:9090  (Check Vagrantfile to see the port forwarding from the VM to/from the host)
+ 
+# Accessing the VM through ssh 
+   - Make sure you are in the 'hello-world' code checked out directory
+   - Then ssh into the VM as follows
+          . vagrant ssh
+          . sudo su
 
-
+# To destroy the environment (i.e. Destroy the Virtual machine)
+   - vagrant destroy 
+    
