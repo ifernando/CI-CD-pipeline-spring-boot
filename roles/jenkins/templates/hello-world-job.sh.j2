@@ -1,0 +1,1 @@
+curl -XPOST --basic -u admin:admin 'http://127.0.0.1:8080/createItem?name=hello-world-job&{{ jenkins_crumb_token }}' --data-binary @config.xml-jenkins-job -H "Content-Type:text/xml" && curl -vvv -X POST --basic -u admin:admin -X POST -H "Content-Type:application/xml"  "http://127.0.0.1:8080/job/hello-world-job/build?{{ jenkins_crumb_token }}"

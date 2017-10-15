@@ -69,22 +69,38 @@
   set_fact:
     jenkins_job_name_exists: "{{ jenkins_job_name in (jenkins_jobs.content|from_json).jobs|map(attribute='name')|list }}"
 
-- name: Create Job for Hello World app
-  uri:
-    user: admin
-    password: "{{ jenkins_admin_pass }}"
-    force_basic_auth: yes
-    url: "http://127.0.0.1:8080/createItem?name=hello-world-job&{{ jenkins_crumb_token }}"
-    method: POST
-    status_code: 201
-    HEADER_Content-Type: application/xml
-    body: "{{ lookup('file', 'config.xml-jenkins-job') }}"
-  register: jenkins_job_name_updated
-  when: not jenkins_job_name_exists
 
-- name: Run Hello World Job using Curl on Jenkins URI
+
+- name: Copy Config xml file to remote jenkins host
   sudo: yes
-  action: command curl -vvv -X POST --basic -u admin:admin -X POST -H "Content-Type:application/xml"  "http://127.0.0.1:8080/job/hello-world-job/build?{{ jenkins_crumb_token }}"
+  template: src=config.xml-jenkins-job dest="/tmp/config.xml-jenkins-job" force=yes mode=0755
+
+- name: Copy Shell script to remote jenkins host
+  sudo: yes
+  template: src=hello-world-job.sh.j2 dest="/tmp/hello-world-job.sh" force=yes mode=0755
+
+- name: Run script against the Jenkins API to create the hello world Job
+  sudo: yes
+  command: sh /tmp/hello-world-job.sh
+
+
+
+#- name: Create Job for Hello World app
+#  uri:
+#    user: admin
+#    password: "{{ jenkins_admin_pass }}"
+#    force_basic_auth: yes
+#    url: "http://127.0.0.1:8080/createItem?name=hello-world-job&{{ jenkins_crumb_token }}"
+#    method: POST
+#    status_code: 201
+#    HEADER_Content-Type: application/xml
+#    body: "{{ lookup('file', 'config.xml-jenkins-job') }}"
+#  register: jenkins_job_name_updated
+#  when: not jenkins_job_name_exists
+
+#- name: Run Hello World Job using Curl on Jenkins URI
+#  sudo: yes
+#  action: command curl -vvv -X POST --basic -u admin:admin -X POST -H "Content-Type:application/xml"  "http://127.0.0.1:8080/job/hello-world-job/build?{{ jenkins_crumb_token }}"
 
 #- name: Run Hello World Job
 #  uri:
