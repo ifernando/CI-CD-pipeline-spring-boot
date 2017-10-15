@@ -20,7 +20,7 @@
       <insensitiveSearch>false</insensitiveSearch>
     </hudson.search.UserSearchProperty>
     <hudson.security.HudsonPrivateSecurityRealm_-Details>
-      <passwordHash>ansible_jenkins:{{ jenkins_password_hash.stdout }}</passwordHash>
+      <passwordHash>admin:{{ jenkins_admin_pass_hash.stdout }}</passwordHash>
     </hudson.security.HudsonPrivateSecurityRealm_-Details>
   </properties>
 </user>

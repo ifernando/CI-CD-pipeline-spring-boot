@@ -1,0 +1,65 @@
+- name: Ensure Jenkins SSH directory exists
+  sudo: yes
+  file: path="~jenkins/.ssh" owner=jenkins group=jenkins mode=0755 state=directory
+
+- name: Install Jenkins SSH Pub Key
+  sudo: yes
+  copy: src=jenkins_ssh_public_key dest="~jenkins/.ssh/id_rsa.pub" owner=jenkins group=jenkins mode=0640
+
+#- name: Allow logins with Jenkins SSH key
+#  sudo: yes
+#  authorized_key: user=jenkins key="{{ lookup('file', jenkins_ssh_public_key) }}"
+
+- name: Install Jenkins SSH PVT Key
+  sudo: yes
+  copy: src=jenkins_ssh_private_key dest="~jenkins/.ssh/id_rsa" owner=jenkins group=jenkins mode=0600
+
+- name: Create Jenkins admin password hash
+  shell: echo -n "{{ jenkins_admin_pass }}{admin}" | sha256sum - | awk '{ print $1; }'
+  sudo: yes
+  register: jenkins_admin_pass_hash
+
+
+- name: Create admin user directory
+  sudo: yes
+  file:
+    path: "~jenkins/users/admin"
+    owner: jenkins
+    group: jenkins
+    mode: 0755
+    state: directory
+    recurse: yes
+
+- name: Create admin
+  sudo: yes
+  template: src=admin-config.xml.j2 dest="~jenkins/users/admin/config.xml" force=no
+  register: jenkins_admin_config
+
+#- name: Create config
+#  copy: src=config.xml dest="~jenkins/config.xml"
+#  register: jenkins_config
+
+- name: Restart Jenkins if necessary
+  sudo: yes
+  service: name=jenkins state=restarted
+  when: jenkins_admin_config|changed
+
+- name: Wait for Jenkins to become available
+  wait_for: port=8080
+
+- name: Get Jenkins crumb
+  uri:
+    user: admin
+    password: "{{ jenkins_admin_pass }}"
+    force_basic_auth: yes
+    url: "http://127.0.0.1:8080/crumbIssuer/api/json"
+    return_content: yes
+  register: jenkins_crumb
+  until: jenkins_crumb.content.find('Please wait while Jenkins is getting ready to work') == -1
+  retries: 10
+  delay: 5
+
+- name: Set crumb token
+  set_fact:
+    jenkins_crumb_token: "{{ jenkins_crumb.json.crumbRequestField }}={{ jenkins_crumb.json.crumb }}"
+

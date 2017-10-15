@@ -24,4 +24,4 @@
   action: command java -jar {{ jenkins.cli_dest }} -s http://localhost:8080 install-plugin {{ plugins_updates.stdout }}
   when: plugins_updates.stdout != ''
   notify:
-    - 'Safe Restart Jenkins'
+    - 'Restart Jenkins'

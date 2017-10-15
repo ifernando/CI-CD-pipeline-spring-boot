@@ -1,23 +1,85 @@
+---
 - name: Get list of jobs
-  uri: url="http://127.0.0.1:8080/api/json?tree=jobs[name]" return_content=yes
-  register: jobs
+  uri:
+    user: admin
+    password: "{{ jenkins_admin_pass }}"
+    force_basic_auth: yes
+    url: "http://127.0.0.1:8080/api/json?tree=jobs[name]"
+    return_content: yes
+  register: jenkins_jobs
+  until: jenkins_jobs.content.find('Please wait while Jenkins is getting ready to work') == -1
+  retries: 10
+  delay: 5
 
 - name: Check if seed job exists
   set_fact:
-    seed_exists: "{{ seed_name in jobs.json.jobs|map(attribute='name')|list }}"
+    jenkins_seed_job_exists: "{{ jenkins_seed_name in (jenkins_jobs.content|from_json).jobs|map(attribute='name')|list }}"
 
 - name: Create seed job
   uri:
-    url: "http://127.0.0.1:8080/createItem?name={{ seed_name }}"
+    user: admin
+    password: "{{ jenkins_admin_pass }}"
+    force_basic_auth: yes
+    url: "http://127.0.0.1:8080/createItem?name={{ jenkins_seed_name }}&{{ jenkins_crumb_token }}"
     method: POST
     HEADER_Content-Type: application/xml
     body: "{{ lookup('template', jenkins_seed_template) }}"
-  register: jenkins_seed_updated
-  when: not seed_exists
+  register: jenkins_seed_job_updated
+  when: not jenkins_seed_job_exists
+
+- name: Update seed job
+  uri:
+    user: admin
+    password: "{{ jenkins_admin_pass }}"
+    force_basic_auth: yes
+    url: "http://127.0.0.1:8080/job/{{ jenkins_seed_name }}/config.xml?{{ jenkins_crumb_token }}"
+    method: POST
+    HEADER_Content-Type: application/xml
+    body: "{{ lookup('template', jenkins_seed_template) }}"
+  register: jenkins_seed_job_updated
+  when: jenkins_seed_job_exists
 
 - name: Run seed job
   uri:
-    url: "http://127.0.0.1:8080/job/{{ seed_name }}/build"
+    user: admin
+    password: "{{ jenkins_admin_pass }}"
+    force_basic_auth: yes
+    url: "http://127.0.0.1:8080/job/{{ jenkins_seed_name }}/build?{{ jenkins_crumb_token }}"
     method: POST
     status_code: 201
-  when: jenkins_seed_updated|success
+  when: jenkins_seed_job_updated|success
+
+- name: Copy Jenkins Credentials shell script
+  sudo: yes
+  template: src=credentials.sh.j2 dest="/tmp/credentials.sh" force=yes mode=0755
+
+- name: Run shell script to produce Jenkins credentials
+  sudo: yes
+  command: sh /tmp/credentials.sh
+
+- name: Check if Hello world job exists
+  set_fact:
+    jenkins_job_name_exists: "{{ jenkins_job_name in (jenkins_jobs.content|from_json).jobs|map(attribute='name')|list }}"
+
+- name: Create Job for Hello World app
+  uri:
+    user: admin
+    password: "{{ jenkins_admin_pass }}"
+    force_basic_auth: yes
+    url: "http://127.0.0.1:8080/createItem?name=hello-world-job&{{ jenkins_crumb_token }}"
+    method: POST
+    status_code: 201
+    HEADER_Content-Type: application/xml
+    body: "{{ lookup('file', 'config.xml-jenkins-job') }}"
+  register: jenkins_job_name_updated
+  when: not jenkins_job_name_exists
+
+- name: Run Hello World Job
+  uri:
+    user: admin
+    password: "{{ jenkins_admin_pass }}"
+    force_basic_auth: yes
+    url: "http://127.0.0.1:8080/job/{{ jenkins_job_name }}/build?{{ jenkins_crumb_token }}"
+    method: POST
+    status_code: 201
+  when: jenkins_job_name_updated|success

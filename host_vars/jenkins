@@ -1,8 +1,24 @@
 ---
 plugins:
   - 'git'
+  - 'git-client'
+  - 'git-parameter'
+  - 'github'
+  - 'pipeline-build-step'
+  - 'pipeline-input-step'
+  - 'pipeline-stage-step'
+  - 'pipeline-maven'
   - 'copyartifact'
   - 'build-pipeline-plugin'  
+  - 'maven-plugin'  
+  - 'maven-metadata-plugin'  
+  - 'copyartifact'  
+  - 'credentials'  
+  - 'docker-commons'  
+  - 'docker-java-api'  
+  - 'docker-plugin'  
+  - 'docker-workflow'  
+  - 'cloudbees-folder'  
 port: 8081
 prefix: '/build'
 email:
