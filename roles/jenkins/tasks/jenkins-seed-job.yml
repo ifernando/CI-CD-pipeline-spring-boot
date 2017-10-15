@@ -79,6 +79,10 @@
   sudo: yes
   template: src=hello-world-job.sh.j2 dest="/tmp/hello-world-job.sh" force=yes mode=0755
 
+- name: Sleep for 45s
+  sudo: yes
+  command: sleep 45
+
 - name: Run script against the Jenkins API to create the hello world Job
   sudo: yes
   command: sh /tmp/hello-world-job.sh
