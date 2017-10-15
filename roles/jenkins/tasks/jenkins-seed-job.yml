@@ -82,13 +82,17 @@
   register: jenkins_job_name_updated
   when: not jenkins_job_name_exists
 
-- name: Run Hello World Job
-  uri:
-    user: admin
-    password: "{{ jenkins_admin_pass }}"
-    force_basic_auth: yes
-    url: "http://127.0.0.1:8080/job/{{ jenkins_job_name }}/build?{{ jenkins_crumb_token }}"
-    method: POST
-    status_code: 201
-    timeout: 1200
-  when: jenkins_job_name_updated|success
+- name: Run Hello World Job using Curl on Jenkins URI
+  sudo: yes
+  action: command curl -vvv -X POST --basic -u admin:admin -X POST -H "Content-Type:application/xml"  "http://127.0.0.1:8080/job/hello-world-job/build?{{ jenkins_crumb_token }}"
+
+#- name: Run Hello World Job
+#  uri:
+#    user: admin
+#    password: "{{ jenkins_admin_pass }}"
+#    force_basic_auth: yes
+#    url: "http://127.0.0.1:8080/job/{{ jenkins_job_name }}/build?{{ jenkins_crumb_token }}"
+#    method: POST
+#    status_code: 201
+#    timeout: 1200
+#  when: jenkins_job_name_updated|success
