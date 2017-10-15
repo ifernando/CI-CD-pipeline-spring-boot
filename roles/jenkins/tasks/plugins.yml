@@ -24,9 +24,19 @@
 - name: Install/update plugins
   sudo: yes
   action: command java -jar {{ jenkins.cli_dest }} -s http://localhost:8080 install-plugin git git-client docker-plugin workflow-multibranch workflow-cps-global-lib workflow-basic-steps workflow-aggregator pipeline-stage-view pipeline-stage-tags-metadata pipeline-stage-step pipeline-rest-api pipeline-model-extensions pipeline-model-definition pipeline-model-declarative-agent pipeline-model-api pipeline-milestone-step pipeline-graph-analysis momentjs handlebars cloudbees-folder docker-workflow docker-plugin docker-java-api docker-commons credentials copyartifact maven-metadata-plugin maven-plugin build-pipeline-plugin copyartifact pipeline-maven pipeline-stage-step pipeline-input-step pipeline-build-step github git-server git-parameter git-client git
-  notify:
-    - 'Safe Restart Jenkins'
+#  notify:
+#    - 'Restart Jenkins'
 
+- name: Jenkins restart..
+  sudo: yes
+  action: command service jenkins restart
+
+#  handlers:
+#    - name: Restart Jenkins
+#      service:
+#        name: jenkins
+#        state: restarted
+#
 - name: "{{ startup_delay_s | default(30) }}s delay while starting Jenkins"
   wait_for: port=8080 delay={{ startup_delay_s | default(30) }}
 
@@ -38,6 +48,10 @@
 - name: Update plugins
   sudo: yes
   action: command java -jar {{ jenkins.cli_dest }} -s http://localhost:8080 install-plugin {{ plugins_updates.stdout }}
-  when: plugins_updates.stdout != ''
+  #when: plugins_updates.stdout != ''
   notify:
     - 'Restart Jenkins'
+
+- name: Jenkins restart
+  sudo: yes
+  action: command service jenkins restart

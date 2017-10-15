@@ -39,10 +39,14 @@
 #  copy: src=config.xml dest="~jenkins/config.xml"
 #  register: jenkins_config
 
-- name: Restart Jenkins if necessary
+#- name: Restart Jenkins if necessary
+#  sudo: yes
+#  service: name=jenkins state=restarted
+#  when: jenkins_admin_config|changed
+
+- name: Jenkins restart..
   sudo: yes
-  service: name=jenkins state=restarted
-  when: jenkins_admin_config|changed
+  action: command service jenkins restart
 
 - name: Wait for Jenkins to become available
   wait_for: port=8080
