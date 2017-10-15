@@ -1,0 +1,12 @@
+- name: Create Job for test app
+  uri:
+    user: admin
+    password: "{{ jenkins_admin_pass }}"
+    force_basic_auth: yes
+    url: "http://127.0.0.1:8080/createItem?name=test-app&{{ jenkins_crumb_token }}"
+    method: POST
+    status_code: 201
+    HEADER_Content-Type: application/xml
+    body: "{{ lookup('file', 'config.xml-jenkins-job') }}"
+  register: jenkins_test_job_updated
+
