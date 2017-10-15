@@ -57,6 +57,13 @@
   sudo: yes
   command: sh /tmp/credentials.sh
 
+- name: Jenkins restart..
+  sudo: yes
+  action: command service jenkins restart
+
+- name: Wait for Jenkins to become available
+  wait_for: port=8080
+
 - name: Check if Hello world job exists
   set_fact:
     jenkins_job_name_exists: "{{ jenkins_job_name in (jenkins_jobs.content|from_json).jobs|map(attribute='name')|list }}"

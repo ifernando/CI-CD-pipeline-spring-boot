@@ -40,18 +40,18 @@
 - name: "{{ startup_delay_s | default(30) }}s delay while starting Jenkins"
   wait_for: port=8080 delay={{ startup_delay_s | default(30) }}
 
-- name: List plugins to be updated
-  sudo: yes
-  action: shell java -jar {{ jenkins.cli_dest }} -s http://localhost:8080 list-plugins | grep ')$' | cut -f 1 -d ' ' | sed ':a;N;$!ba;s/\n/ /g'
-  register: plugins_updates
+#- name: List plugins to be updated
+#  sudo: yes
+#  action: shell java -jar {{ jenkins.cli_dest }} -s http://localhost:8080 list-plugins | grep ')$' | cut -f 1 -d ' ' | sed ':a;N;$!ba;s/\n/ /g'
+#  register: plugins_updates
+#
+#- name: Update plugins
+#  sudo: yes
+#  action: command java -jar {{ jenkins.cli_dest }} -s http://localhost:8080 install-plugin {{ plugins_updates.stdout }}
+#  #when: plugins_updates.stdout != ''
+#  notify:
+#    - 'Restart Jenkins'
 
-- name: Update plugins
-  sudo: yes
-  action: command java -jar {{ jenkins.cli_dest }} -s http://localhost:8080 install-plugin {{ plugins_updates.stdout }}
-  #when: plugins_updates.stdout != ''
-  notify:
-    - 'Restart Jenkins'
-
-- name: Jenkins restart
-  sudo: yes
-  action: command service jenkins restart
+#- name: Jenkins restart
+#  sudo: yes
+#  action: command service jenkins restart
