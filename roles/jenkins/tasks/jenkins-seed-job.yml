@@ -47,6 +47,7 @@
     url: "http://127.0.0.1:8080/job/{{ jenkins_seed_name }}/build?{{ jenkins_crumb_token }}"
     method: POST
     status_code: 201
+    timeout: 40
   when: jenkins_seed_job_updated|success
 
 - name: Copy Jenkins Credentials shell script
@@ -89,4 +90,5 @@
     url: "http://127.0.0.1:8080/job/{{ jenkins_job_name }}/build?{{ jenkins_crumb_token }}"
     method: POST
     status_code: 201
+    timeout: 1200
   when: jenkins_job_name_updated|success
