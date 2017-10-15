@@ -20,7 +20,7 @@ end
 
 Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 8080, host: 9090
-  config.vm.network "forwarded_port", guest: 8080, host: 9091
+  config.vm.network "forwarded_port", guest: 8081, host: 9091
   config.vm.provision "ansible" do |ansible|
           ansible.verbose = "vvv"
           ansible.playbook = "jenkins.yml"

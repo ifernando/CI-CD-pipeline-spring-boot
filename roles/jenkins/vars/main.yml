@@ -1,7 +1,7 @@
 ---
 jenkins_dest: /opt/jenkins
 jenkins_lib: /var/lib/jenkins
-jenkins_admin_pass: "{{ lookup('file', '/etc/hosts') }}"
+port: 8080
 jenkins:
   deb:
     repo: 'deb http://pkg.jenkins-ci.org/debian binary/' # Jenkins repository
@@ -12,3 +12,17 @@ jenkins:
   updates_dest: '{{ jenkins_dest }}/updates_jenkins.json' # Jenkins updates file
 
 #  jenkins_admin_pass: "{{ lookup('file', '/var/lib/jenkins/secrets/initialAdminPassword') }}"
+
+jenkins_admin_pass: admin
+#jenkins_ssh_private_key: jenkins-id_rsa
+#jenkins_ssh_public_key: jenkins-id_rsa.pub
+jenkins_git_user: git
+jenkins_git_host: github.com
+jenkins_git_path: ifernando
+jenkins_git_repositories:
+- jenkins-hello-world
+
+jenkins_seed_name: pipeline-seed
+jenkins_job_name: hello-world-job
+jenkins_seed_template: seed-config.xml.j2
+jenkins_job_template: jobs.groovy.j2

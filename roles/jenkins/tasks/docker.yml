@@ -1,0 +1,41 @@
+# Install Docker
+- name: Install Docker
+  sudo: yes
+  apt: pkg=docker state=latest update_cache=yes cache_valid_time=86400
+
+- name: Get Docker Engine install script
+  sudo: yes
+  action: shell curl -sSL https://get.docker.com/ > /tmp/install_docker.sh && chmod +x /tmp/install_docker.sh
+
+- name: Install Docker Engine from Script
+  sudo: yes
+  command: sudo bash /tmp/install_docker.sh
+
+- name: Add Jenkins User to Docker Group
+  sudo: yes
+  command: usermod -aG docker jenkins
+
+- name: Set Docker Socket OPTS
+  sudo: yes
+  action: shell echo DOCKER_OPTS=\'-H tcp://0.0.0.0:4243 -H unix:///var/run/docker.sock\' > /etc/default/docker
+
+- name: Create Directory to hold docker.io creds
+  sudo: yes
+  file: path="~jenkins/.docker" owner=jenkins group=jenkins mode=0755 state=directory
+
+- name: Copy Docker hub cred file
+  sudo: yes
+  copy:
+    src: config.json
+    dest: "~jenkins/.docker/"
+    owner: "jenkins"
+    group: "jenkins"
+    mode: 0644
+    force: yes
+    backup: yes
+  register: docker_hub_creds
+
+- name: Restart Docker Service
+  sudo: yes
+  command: service docker restart
+

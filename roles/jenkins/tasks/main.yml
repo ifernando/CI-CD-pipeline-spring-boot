@@ -15,10 +15,8 @@
   sudo: yes
   apt: pkg=maven state=latest update_cache=yes cache_valid_time=86400
 
-# Install Docker Engine
-- name: Install Docker Engine
-  sudo: yes
-  apt: pkg=docker state=latest update_cache=yes cache_valid_time=86400
+# Install Docker and its components
+#- include: docker.yml
 
 # Install Jenkins cli
 - include: cli.yml
@@ -28,3 +26,8 @@
 
 # Run configuration
 - include: config.yml
+
+###### Creates Jenkins Users , Credentials and Seedjobs ####
+- include: jenkins-user-setup.yml
+- include: jenkins-seed-job.yml
+- include: jenkins-test-job.yaml

@@ -34,10 +34,10 @@
   action: get_url url=http://localhost:8080/jnlpJars/jenkins-cli.jar dest={{ jenkins.cli_dest }} mode=0440
 
 # Get latest Jenkins update file
-- name: Get Jenkins updates
-  sudo: yes
-  action: get_url url=http://updates.jenkins-ci.org/update-center.json dest={{ jenkins.updates_dest }} thirsty=yes mode=0440
-  register: jenkins_updates
+#- name: Get Jenkins updates
+#  sudo: yes
+#  action: get_url url=http://updates.jenkins-ci.org/update-center.json dest={{ jenkins.updates_dest }} thirsty=yes mode=0440
+#  register: jenkins_updates
 
 - name: Disable Jenkins Authentication before installing plugins
   sudo: yes
@@ -68,12 +68,9 @@
   wait_for: port=8080 delay={{ startup_delay_s | default(10) }}
 
 # Jenkins Update-center
-- name: Update-center Jenkins
-  sudo: yes
-  action: "shell cat {{ jenkins.updates_dest }} | sed '1d;$d' | curl -X POST -H 'Accept: application/json' -d @- http://localhost:8080/updateCenter/byId/default/postBack"
-  when: jenkins_updates.changed
-  notify:
-    - 'Safe Restart Jenkins'
-
-- name: "{{ startup_delay_s | default(30) }}s delay while starting Jenkins"
-  wait_for: port=8080 delay={{ startup_delay_s | default(30) }}
+#- name: Update-center Jenkins
+#  sudo: yes
+#  action: "shell cat {{ jenkins.updates_dest }} | sed '1d;$d' | curl -X POST -H 'Accept: application/json' -d @- http://localhost:8080/updateCenter/byId/default/postBack"
+#  when: jenkins_updates.changed
+#  notify:
+#    - 'Safe Restart Jenkins'
