@@ -33,6 +33,10 @@ vagrant up
     - This repository contains the code provide by FETCHR : https://github.com/talal-shobaita/hello-world plus a Groovy file (build.groovy) , a Dockerfile and a dockerentry file to set some Docker variables required for the tomcat docker image
     - The build.groovy file will be read by the jenkins pipeline  
 
+#Manually run the ansible playbook
+ - Make sure you are in the 'hello-world' directory
+ansible-playbook -vvvv -i ansible.host --private-key=./.vagrant/machines/default/virtualbox/private_key -u vagrant jenkins.yml
+
 # Accessing the Jenkins through your host 
    - http://localhost:9090  (Check Vagrantfile to see the port forwarding from the VM to/from the host)
  
@@ -42,6 +46,11 @@ vagrant up
           . vagrant ssh
           . sudo su
 
+#If vagrant up fails with an error or ansible playbook fails for some reason , then as a workaround run the ansible-playbook manually
+ - Make sure you are in the 'hello-world' directory
+ansible-playbook -vvvv -i ansible.host --private-key=./.vagrant/machines/default/virtualbox/private_key -u vagrant jenkins.yml
+
 # To destroy the environment (i.e. Destroy the Virtual machine)
+ - Make sure you are in the 'hello-world' directory
    - vagrant destroy 
     
