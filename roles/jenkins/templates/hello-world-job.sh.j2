@@ -5,11 +5,4 @@
 
 curl -vvv -X POST --basic -u admin:admin -X POST -H "Content-Type:application/xml"  "http://127.0.0.1:8080/job/{{ jenkins_job_name }}/build?{{ jenkins_crumb_token }}"
 
-#!/bin/bash
-
-#Check for existence of the Jenkins pipeline (i.e : Check job config.xml) and if not creates the job using the jenkins API
-[ -f /var/lib/jenkins/jobs/hello-world-job/config.xml || curl -XPOST --basic -u admin:admin 'http://127.0.0.1:8080/createItem?name=hello-world-job&Jenkins-Crumb=e61e3b2cb4f0b91bb3ace5e60b726523' --data-binary @/tmp/config.xml-jenkins-job -H "Content-Type:text/xml" 
-
-curl -vvv -X POST --basic -u admin:admin -X POST -H "Content-Type:application/xml"  "http://127.0.0.1:8080/job/hello-world-job/build?Jenkins-Crumb=e61e3b2cb4f0b91bb3ace5e60b726523"
-
 
