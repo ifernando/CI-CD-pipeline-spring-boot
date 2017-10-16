@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Check for existence of the Jenkins pipeline (i.e : Check job config.xml) and if not creates the job using the jenkins API
-[ -f {{ jenkins_lib} ]/jobs/{{ jenkins_job_name }}/config.xml ] || curl -XPOST --basic -u admin:admin 'http://127.0.0.1:8080/createItem?name={{ jenkins_job_name }}&{{ jenkins_crumb_token }}' --data-binary @/tmp/config.xml-jenkins-job -H "Content-Type:text/xml" 
+[ -f {{ jenkins_lib}} ]/jobs/{{ jenkins_job_name }}/config.xml ] || curl -XPOST --basic -u admin:admin 'http://127.0.0.1:8080/createItem?name={{ jenkins_job_name }}&{{ jenkins_crumb_token }}' --data-binary @/tmp/config.xml-jenkins-job -H "Content-Type:text/xml" 
 
 curl -vvv -X POST --basic -u admin:admin -X POST -H "Content-Type:application/xml"  "http://127.0.0.1:8080/job/{{ jenkins_job_name }}/build?{{ jenkins_crumb_token }}"
 
